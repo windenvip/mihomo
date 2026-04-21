@@ -108,7 +108,7 @@ dns:
       - +.youtube.com
 
 proxy-groups:
-  # 全局总智能自动
+  # 全局总智能自动【已追加所有新增国家】
   - name: ♻️ 智能自动
     type: url-test
     url: https://www.gstatic.com/generate_204
@@ -124,12 +124,15 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
+      - 🇮🇩 印尼
+      - 🇲🇾 马来西亚
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇻🇪 德国
+      - 🇩🇪 德国
       - 🇫🇮 芬兰
       - 🇸🇪 瑞典
-      - 🇻🇰 丹麦
+      - 🇩🇰 丹麦
       - 🇳🇴 挪威
       - 🇨🇭 瑞士
       - 🇦🇹 奥地利
@@ -138,10 +141,14 @@ proxy-groups:
       - 🇮🇹 意大利
       - 🇪🇸 西班牙
       - 🇵🇹 葡萄牙
+      - 🇨🇿 捷克
+      - 🇱🇻 拉脱维亚
+      - 🇱🇹 立陶宛
+      - 🇵🇾 巴拉圭
       - 🌐 其他节点
       - DIRECT
 
-  # 地区分组
+  # 地区分组【原有全部保留 + 新增全部国家完整分组 + 正则过滤】
   - name: 🇭🇰 中国香港
     type: url-test
     include-all: true
@@ -202,6 +209,45 @@ proxy-groups:
     timeout: 2000
     strategy: fastest
 
+  # ========== 新增 越南 ==========
+  - name: 🇻🇳 越南
+    type: url-test
+    include-all: true
+    filter: (?i)越南|VN|Vietnam|海阳|HaiDuong
+    url: https://www.gstatic.com/generate_204
+    interval: 150
+    tolerance: 50
+    max-delay: 450
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+
+  # ========== 新增 印度尼西亚 ==========
+  - name: 🇮🇩 印尼
+    type: url-test
+    include-all: true
+    filter: (?i)印尼|ID|Indonesia
+    url: https://www.gstatic.com/generate_204
+    interval: 150
+    tolerance: 50
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+
+  # ========== 新增 马来西亚 ==========
+  - name: 🇲🇾 马来西亚
+    type: url-test
+    include-all: true
+    filter: (?i)马来西亚|MY|Malaysia
+    url: https://www.gstatic.com/generate_204
+    interval: 150
+    tolerance: 50
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+
   - name: 🇺🇲 美国
     type: url-test
     include-all: true
@@ -238,7 +284,8 @@ proxy-groups:
     timeout: 2000
     strategy: fastest
 
-  - name: 🇻🇪 德国
+  # 【修复原错误：🇻🇪委内瑞拉 → 修正为 🇩🇪德国】
+  - name: 🇩🇪 德国
     type: url-test
     include-all: true
     filter: (?i)德|DE|Germany|柏林|法兰克福|慕尼黑
@@ -274,7 +321,7 @@ proxy-groups:
     timeout: 2000
     strategy: fastest
 
-  - name: 🇻🇰 丹麦
+  - name: 🇩🇰 丹麦
     type: url-test
     include-all: true
     filter: (?i)丹|DK|Denmark|哥本哈根
@@ -382,10 +429,62 @@ proxy-groups:
     timeout: 2000
     strategy: fastest
 
+  # ========== 新增 捷克 ==========
+  - name: 🇨🇿 捷克
+    type: url-test
+    include-all: true
+    filter: (?i)捷克|CZ|Czech
+    url: https://www.gstatic.com/generate_204
+    interval: 150
+    tolerance: 50
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+
+  # ========== 新增 拉脱维亚 ==========
+  - name: 🇱🇻 拉脱维亚
+    type: url-test
+    include-all: true
+    filter: (?i)拉脱维亚|LV|Latvia
+    url: https://www.gstatic.com/generate_204
+    interval: 150
+    tolerance: 50
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+
+  # ========== 新增 立陶宛 ==========
+  - name: 🇱🇹 立陶宛
+    type: url-test
+    include-all: true
+    filter: (?i)立陶宛|LT|Lithuania
+    url: https://www.gstatic.com/generate_204
+    interval: 150
+    tolerance: 50
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+
+  # ========== 新增 巴拉圭 ==========
+  - name: 🇵🇾 巴拉圭
+    type: url-test
+    include-all: true
+    filter: (?i)巴拉圭|PY|Paraguay
+    url: https://www.gstatic.com/generate_204
+    interval: 150
+    tolerance: 50
+    max-delay: 700
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+
   - name: 🌐 其他节点
     type: url-test
     include-all: true
-    exclude-filter: (?i)港|HK|台湾|TW|韩国|KR|日本|JP|新加坡|SG|美国|US|俄罗斯|RU|荷兰|NL|德国|DE|芬兰|FI|瑞典|SE|丹麦|DK|挪威|NO|瑞士|CH|奥地利|AT|法国|FR|英国|UK|意大利|IT|西班牙|ES|葡萄牙|PT
+    exclude-filter: (?i)港|HK|台湾|TW|韩国|KR|日本|JP|新加坡|SG|越南|VN|印尼|ID|马来西亚|MY|美国|US|俄罗斯|RU|荷兰|NL|德国|DE|芬兰|FI|瑞典|SE|丹麦|DK|挪威|NO|瑞士|CH|奥地利|AT|法国|FR|英国|UK|意大利|IT|西班牙|ES|葡萄牙|PT|捷克|CZ|拉脱维亚|LV|立陶宛|LT|巴拉圭|PY
     url: https://www.gstatic.com/generate_204
     interval: 150
     tolerance: 50
@@ -394,7 +493,7 @@ proxy-groups:
     timeout: 2000
     strategy: fastest
 
-  # 手动选择
+  # 手动选择分组【已全部追加新增国家到下拉菜单】
   - name: 🚀 节点选择
     type: select
     proxies:
@@ -404,13 +503,16 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
+      - 🇮🇩 印尼
+      - 🇲🇾 马来西亚
       - 🇺🇲 美国
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇻🇪 德国
+      - 🇩🇪 德国
       - 🇫🇮 芬兰
       - 🇸🇪 瑞典
-      - 🇻🇰 丹麦
+      - 🇩🇰 丹麦
       - 🇳🇴 挪威
       - 🇨🇭 瑞士
       - 🇦🇹 奥地利
@@ -419,10 +521,14 @@ proxy-groups:
       - 🇮🇹 意大利
       - 🇪🇸 西班牙
       - 🇵🇹 葡萄牙
+      - 🇨🇿 捷克
+      - 🇱🇻 拉脱维亚
+      - 🇱🇹 立陶宛
+      - 🇵🇾 巴拉圭
       - 🌐 其他节点
       - DIRECT
 
-  # 原有APP
+  # 原有APP分组全部保留，仅追加新增优质线路到优选池
   - name: 📲 电报消息
     type: url-test
     url: https://cdn.jsdelivr.net/gh/telegramme-io/static/telegram_204.png
@@ -438,9 +544,10 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇻🇪 德国
+      - 🇩🇪 德国
       - ♻️ 智能自动
       - DIRECT
 
@@ -461,7 +568,7 @@ proxy-groups:
       - 🇸🇬 新加坡
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇻🇪 德国
+      - 🇩🇪 德国
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -481,9 +588,10 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇻🇪 德国
+      - 🇩🇪 德国
       - ♻️ 智能自动
       - DIRECT
 
@@ -502,9 +610,10 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇻🇪 德国
+      - 🇩🇪 德国
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -524,6 +633,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇷🇺 俄罗斯
       - ♻️ 智能自动
       - DIRECT
@@ -550,9 +660,10 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇻🇪 德国
+      - 🇩🇪 德国
       - ♻️ 智能自动
       - DIRECT
 
@@ -571,6 +682,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - ♻️ 智能自动
       - DIRECT
 
@@ -590,6 +702,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -609,6 +722,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - ♻️ 智能自动
       - DIRECT
 
@@ -627,6 +741,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -646,6 +761,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - ♻️ 智能自动
       - DIRECT
 
@@ -664,6 +780,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -683,6 +800,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - ♻️ 智能自动
       - DIRECT
 
@@ -702,6 +820,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -721,6 +840,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -740,6 +860,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -760,6 +881,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -779,6 +901,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -798,6 +921,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -817,6 +941,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - ♻️ 智能自动
       - DIRECT
 
@@ -836,6 +961,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -855,6 +981,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - ♻️ 智能自动
       - DIRECT
 
@@ -874,6 +1001,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - ♻️ 智能自动
       - DIRECT
 
@@ -892,6 +1020,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - ♻️ 智能自动
       - DIRECT
 
@@ -911,6 +1040,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -930,6 +1060,7 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
@@ -1007,9 +1138,10 @@ proxy-groups:
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
+      - 🇻🇳 越南
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇻🇪 德国
+      - 🇩🇪 德国
       - ♻️ 智能自动
       - DIRECT
 
