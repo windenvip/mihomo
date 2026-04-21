@@ -1,0 +1,728 @@
+# 基础配置
+mixed-port: 7890
+socks-port: 7891
+port: 7892
+redir-port: 7893
+tproxy-port: 7894
+allow-lan: true
+bind-address: '*'
+mode: rule
+log-level: info
+external-controller: '0.0.0.0:9090'
+secret: ''
+
+# 网络增强 适配NAS容器桥接网络
+tun:
+  enable: true
+  stack: mixed
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+
+# 订阅节点（后续新增订阅仅添加此处，代理分组完全无需修改）
+proxy-providers:
+  shaoyouvip:
+    type: http
+    url: "https://raw.githubusercontent.com/shaoyouvip/free/refs/heads/main/mihomo.yaml"
+    interval: 21600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+  kooker:
+    type: http
+    url: "https://raw.githubusercontent.com/kooker/FreeSubsCheck/refs/heads/main/all.yaml"
+    interval: 21600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+  nodesfree:
+    type: http
+    url: "https://raw.githubusercontent.com/nodesfree/clashnode/refs/heads/main/clash.yaml"
+    interval: 21600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+  ovmvo:
+    type: http
+    url: "https://raw.githubusercontent.com/ovmvo/FreeSub/refs/heads/main/sub/permanent/mihomo.yaml"
+    interval: 21600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+
+# 地理数据源
+profile:
+  store-selected: true
+  store-fake-ip: true
+geo-auto-update: true
+geo-update-interval: 24
+geodata-mode: false
+geox-url:
+  geoip: https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip-lite.dat
+  geosite: https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat
+  mmdb: https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb
+  asn: https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb
+
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*"
+    - +.lan
+    - +.local
+    - time.*.com
+    - ntp.*.com
+    - +.market.xiaomi.com
+  use-hosts: false
+  use-system-hosts: false
+  respect-rules: false
+  default-nameserver:
+    - tls://223.5.5.5
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  proxy-server-nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  direct-nameserver: []
+  fallback: []
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
+      - 0.0.0.0/32
+    domain:
+      - +.google.com
+      - +.facebook.com
+      - +.youtube.com
+
+# ===================== 核心优化：代理分组 =====================
+# 【结构调整】♻️ 智能自动 放到所有国家地区分组**最前面**
+# 【排序规则】全部国家严格：**离中国由近到远 地理距离排序**
+# 全部 include-all 全局全订阅包含 | 同地区负载均衡轮询 | 全APP默认智能自动
+proxy-groups:
+  # 【置顶】主自动故障转移组（所有分组第一位）
+  # 优先级链路完全跟随下方国家【由近到远】排序
+  - name: ♻️ 智能自动
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    proxies:
+      - 🇭🇰 香港
+      - 🇨🇳 台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - 🇷🇺 俄罗斯
+      - 🇳🇱 荷兰
+      - 🇩🇪 德国
+      - 🇫🇮 芬兰
+      - 🇸🇪 瑞典
+      - 🇩🇰 丹麦
+      - 🇳🇴 挪威
+      - 🇨🇭 瑞士
+      - 🇦🇹 奥地利
+      - 🇫🇷 法国
+      - 🇬🇧 英国
+      - 🇮🇹 意大利
+      - 🇪🇸 西班牙
+      - 🇵🇹 葡萄牙
+      - 🌐 其他节点
+      - DIRECT
+
+  # ============== 以下所有国家地区分组 严格【离中国由近到远】排序 ==============
+  # 东亚近区
+  - name: 🇭🇰 香港
+    type: load-balance
+    include-all: true
+    filter: (?i)港|HK|hk|Hong Kong|HongKong
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇨🇳 台湾
+    type: load-balance
+    include-all: true
+    filter: (?i)台|TW|Taiwan|新北|彰化
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇰🇷 韩国
+    type: load-balance
+    include-all: true
+    filter: (?i)韩|首尔|KR|Korea|KOR|釜山
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇯🇵 日本
+    type: load-balance
+    include-all: true
+    filter: (?i)日本|JP|Japan|东京|大阪|埼玉|名古屋
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  # 东南亚
+  - name: 🇸🇬 新加坡
+    type: load-balance
+    include-all: true
+    filter: (?i)新加坡|SG|Singapore|狮城
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  # 美洲
+  - name: 🇺🇲 美国
+    type: load-balance
+    include-all: true
+    filter: (?i)美|US|United States|洛杉矶|硅谷|西雅图|芝加哥|达拉斯|凤凰城|圣何塞|纽约
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  # 东欧
+  - name: 🇷🇺 俄罗斯
+    type: load-balance
+    include-all: true
+    filter: (?i)俄|RU|Russia|莫斯科
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  # 西欧/北欧 由近到远
+  - name: 🇳🇱 荷兰
+    type: load-balance
+    include-all: true
+    filter: (?i)荷|NL|Netherlands|阿姆斯特丹
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇩🇪 德国
+    type: load-balance
+    include-all: true
+    filter: (?i)德|DE|Germany|柏林|法兰克福|慕尼黑
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇫🇮 芬兰
+    type: load-balance
+    include-all: true
+    filter: (?i)芬|FI|Finland|赫尔辛基
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇸🇪 瑞典
+    type: load-balance
+    include-all: true
+    filter: (?i)瑞典|SE|Sweden|斯德哥尔摩
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇩🇰 丹麦
+    type: load-balance
+    include-all: true
+    filter: (?i)丹|DK|Denmark|哥本哈根
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇳🇴 挪威
+    type: load-balance
+    include-all: true
+    filter: (?i)挪威|NO|Norway|奥斯陆
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇨🇭 瑞士
+    type: load-balance
+    include-all: true
+    filter: (?i)瑞|CH|Switzerland|苏黎世|日内瓦
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇦🇹 奥地利
+    type: load-balance
+    include-all: true
+    filter: (?i)奥|AT|Austria|维也纳
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇫🇷 法国
+    type: load-balance
+    include-all: true
+    filter: (?i)法|FR|France|巴黎|马赛
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇬🇧 英国
+    type: load-balance
+    include-all: true
+    filter: (?i)英|UK|United Kingdom|伦敦|伯明翰
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇮🇹 意大利
+    type: load-balance
+    include-all: true
+    filter: (?i)意|IT|Italy|米兰|罗马
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇪🇸 西班牙
+    type: load-balance
+    include-all: true
+    filter: (?i)西|ES|Spain|马德里|巴塞罗那
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  - name: 🇵🇹 葡萄牙
+    type: load-balance
+    include-all: true
+    filter: (?i)葡|PT|Portugal|里斯本
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  # 兜底：其余所有剩余全部节点
+  - name: 🌐 其他节点
+    type: load-balance
+    include-all: true
+    exclude-filter: (?i)港|HK|台湾|TW|韩国|KR|日本|JP|新加坡|SG|美国|US|俄罗斯|RU|荷兰|NL|德国|DE|芬兰|FI|瑞典|SE|丹麦|DK|挪威|NO|瑞士|CH|奥地利|AT|法国|FR|英国|UK|意大利|IT|西班牙|ES|葡萄牙|PT
+    url: https://www.gstatic.com/generate_204
+    interval: 60
+    tolerance: 50
+    strategy: round-robin
+
+  # 顶层主选择器（界面下拉菜单，智能自动依旧置顶）
+  - name: 🚀 节点选择
+    type: select
+    proxies:
+      - ♻️ 智能自动
+      - 🇭🇰 香港
+      - 🇨🇳 台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - 🇷🇺 俄罗斯
+      - 🇳🇱 荷兰
+      - 🇩🇪 德国
+      - 🇫🇮 芬兰
+      - 🇸🇪 瑞典
+      - 🇩🇰 丹麦
+      - 🇳🇴 挪威
+      - 🇨🇭 瑞士
+      - 🇦🇹 奥地利
+      - 🇫🇷 法国
+      - 🇬🇧 英国
+      - 🇮🇹 意大利
+      - 🇪🇸 西班牙
+      - 🇵🇹 葡萄牙
+      - 🌐 其他节点
+      - DIRECT
+
+  # ========== 全部应用分流 全部默认首选【智能自动】 ==========
+  - name: 📲 电报消息
+    type: select
+    proxies:
+      - ♻️ 智能自动
+      - DIRECT
+  - name: 💬 Ai平台
+    type: select
+    proxies:
+      - ♻️ 智能自动
+      - DIRECT
+  - name: 📹 油管视频
+    type: select
+    proxies:
+      - ♻️ 智能自动
+      - DIRECT
+  - name: 🎥 奈飞视频
+    type: select
+    proxies:
+      - ♻️ 智能自动
+      - DIRECT
+  - name: 📺 巴哈姆特
+    type: select
+    proxies:
+      - 🇨🇳 台湾
+      - ♻️ 智能自动
+      - DIRECT
+  - name: 📺 哔哩哔哩
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港
+      - 🇨🇳 台湾
+  - name: 🌍 国外媒体
+    type: select
+    proxies:
+      - ♻️ 智能自动
+      - DIRECT
+  - name: 🌏 国内媒体
+    type: select
+    proxies:
+      - DIRECT
+      - ♻️ 智能自动
+  - name: 📢 谷歌FCM
+    type: select
+    proxies:
+      - DIRECT
+      - ♻️ 智能自动
+  - name: Ⓜ️ 微软Bing
+    type: select
+    proxies:
+      - DIRECT
+      - ♻️ 智能自动
+  - name: Ⓜ️ 微软云盘
+    type: select
+    proxies:
+      - DIRECT
+      - ♻️ 智能自动
+  - name: Ⓜ️ 微软服务
+    type: select
+    proxies:
+      - DIRECT
+      - ♻️ 智能自动
+  - name: 🍎 苹果服务
+    type: select
+    proxies:
+      - DIRECT
+      - ♻️ 智能自动
+  - name: 🎮 游戏平台
+    type: select
+    proxies:
+      - DIRECT
+      - ♻️ 智能自动
+  - name: 🎶 网易音乐
+    type: select
+    proxies:
+      - DIRECT
+      - ♻️ 智能自动
+  - name: 🎯 全球直连
+    type: select
+    proxies:
+      - DIRECT
+      - ♻️ 智能自动
+  - name: 🛑 广告拦截
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 🍃 应用净化
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 🐟 漏网之鱼
+    type: select
+    proxies:
+      - ♻️ 智能自动
+      - DIRECT
+
+# 规则集（全部原版完整保留无修改）
+rule-providers:
+  LocalAreaNetwork:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/LocalAreaNetwork.list
+    path: ./ruleset/LocalAreaNetwork.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  UnBan:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/UnBan.list
+    path: ./ruleset/UnBan.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  BanAD:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanAD.list
+    path: ./ruleset/BanAD.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  BanProgramAD:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/BanProgramAD.list
+    path: ./ruleset/BanProgramAD.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  GoogleFCM:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/GoogleFCM.list
+    path: ./ruleset/GoogleFCM.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  GoogleCN:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/GoogleCN.list
+    path: ./ruleset/GoogleCN.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  SteamCN:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/SteamCN.list
+    path: ./ruleset/SteamCN.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Bing:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Bing.list
+    path: ./ruleset/Bing.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  OneDrive:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/OneDrive.list
+    path: ./ruleset/OneDrive.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Microsoft:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Microsoft.list
+    path: ./ruleset/Microsoft.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Apple:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Apple.list
+    path: ./ruleset/Apple.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Telegram:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Telegram.list
+    path: ./ruleset/Telegram.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  AI:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/AI.list
+    path: ./ruleset/AI.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  OpenAi:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/OpenAi.list
+    path: ./ruleset/OpenAi.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  NetEaseMusic:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/NetEaseMusic.list
+    path: ./ruleset/NetEaseMusic.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Epic:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Epic.list
+    path: ./ruleset/Epic.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Origin:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Origin.list
+    path: ./ruleset/Origin.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Sony:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Sony.list
+    path: ./ruleset/Sony.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Steam:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Steam.list
+    path: ./ruleset/Steam.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Nintendo:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Nintendo.list
+    path: ./ruleset/Nintendo.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  YouTube:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/YouTube.list
+    path: ./ruleset/YouTube.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Netflix:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Netflix.list
+    path: ./ruleset/Netflix.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Bahamut:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Bahamut.list
+    path: ./ruleset/Bahamut.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  BilibiliHMT:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/BilibiliHMT.list
+    path: ./ruleset/BilibiliHMT.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Bilibili:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Bilibili.list
+    path: ./ruleset/Bilibili.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  ChinaMedia:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaMedia.list
+    path: ./ruleset/ChinaMedia.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  ProxyMedia:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ProxyMedia.list
+    path: ./ruleset/ProxyMedia.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  ProxyGFWlist:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ProxyGFWlist.list
+    path: ./ruleset/ProxyGFWlist.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  ChinaDomain:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaDomain.list
+    path: ./ruleset/ChinaDomain.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  ChinaCompanyIp:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/ChinaCompanyIp.list
+    path: ./ruleset/ChinaCompanyIp.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Download:
+    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Download.list
+    path: ./ruleset/Download.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
+# 规则（原版完整保留，含办公域名专属直连）
+rules:
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - DOMAIN,office.app.5ddd.com,DIRECT
+  - DOMAIN-KEYWORD,app.5ddd.com,DIRECT
+  - PROCESS-NAME,subs-check.exe,🎯 全球直连
+  - PROCESS-NAME,subs-check,🎯 全球直连
+  - RULE-SET,LocalAreaNetwork,🎯 全球直连
+  - RULE-SET,UnBan,🎯 全球直连
+  - RULE-SET,BanAD,🛑 广告拦截
+  - RULE-SET,BanProgramAD,🍃 应用净化
+  - RULE-SET,GoogleFCM,📢 谷歌FCM
+  - RULE-SET,GoogleCN,🎯 全球直连
+  - RULE-SET,SteamCN,🎯 全球直连
+  - RULE-SET,Bing,Ⓜ️ 微软Bing
+  - RULE-SET,OneDrive,Ⓜ️ 微软云盘
+  - RULE-SET,Microsoft,Ⓜ️ 微软服务
+  - RULE-SET,Apple,🍎 苹果服务
+  - RULE-SET,Telegram,📲 电报消息
+  - RULE-SET,AI,💬 Ai平台
+  - RULE-SET,NetEaseMusic,🎶 网易音乐
+  - RULE-SET,Epic,🎮 游戏平台
+  - RULE-SET,Origin,🎮 游戏平台
+  - RULE-SET,Sony,🎮 游戏平台
+  - RULE-SET,Steam,🎮 游戏平台
+  - RULE-SET,Nintendo,🎮 游戏平台
+  - RULE-SET,YouTube,📹 油管视频
+  - RULE-SET,Netflix,🎥 奈飞视频
+  - RULE-SET,Bahamut,📺 巴哈姆特
+  - RULE-SET,BilibiliHMT,📺 哔哩哔哩
+  - RULE-SET,Bilibili,📺 哔哩哔哩
+  - RULE-SET,ChinaMedia,🌏 国内媒体
+  - RULE-SET,ProxyMedia,🌍 国外媒体
+  - RULE-SET,ProxyGFWlist,🚀 节点选择
+  - RULE-SET,ChinaDomain,🎯 全球直连
+  - RULE-SET,ChinaCompanyIp,🎯 全球直连
+  - RULE-SET,Download,🎯 全球直连
+  - GEOIP,CN,🎯 全球直连
+  - MATCH,🐟 漏网之鱼
