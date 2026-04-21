@@ -11,7 +11,9 @@ log-level: info
 external-controller: '0.0.0.0:9090'
 secret: ''
 
-# 网络增强 适配NAS容器桥接网络
+unified-delay: true
+tcp-concurrent: true
+
 tun:
   enable: true
   stack: mixed
@@ -22,7 +24,6 @@ tun:
   auto-redirect: true
   auto-detect-interface: true
 
-# 订阅节点（后续新增订阅仅添加此处，代理分组完全无需修改）
 proxy-providers:
   shaoyouvip:
     type: http
@@ -57,7 +58,6 @@ proxy-providers:
       url: https://www.gstatic.com/generate_204
       interval: 300
 
-# 地理数据源
 profile:
   store-selected: true
   store-fake-ip: true
@@ -76,12 +76,13 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - "*"
     - +.lan
     - +.local
     - time.*.com
     - ntp.*.com
     - +.market.xiaomi.com
+    - www.gstatic.com
+    - speed.hetzner.de
   use-hosts: false
   use-system-hosts: false
   respect-rules: false
@@ -106,30 +107,29 @@ dns:
       - +.facebook.com
       - +.youtube.com
 
-# ===================== 核心优化：代理分组 =====================
-# 【结构调整】♻️ 智能自动 放到所有国家地区分组**最前面**
-# 【排序规则】全部国家严格：**离中国由近到远 地理距离排序**
-# 全部 include-all 全局全订阅包含 | 同地区负载均衡轮询 | 全APP默认智能自动
 proxy-groups:
-  # 【置顶】主自动故障转移组（所有分组第一位）
-  # 优先级链路完全跟随下方国家【由近到远】排序
+  # 全局总智能自动
   - name: ♻️ 智能自动
-    type: fallback
+    type: url-test
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 90
+    tolerance: 50
+    max-delay: 450
+    lazy: false
+    timeout: 2000
+    strategy: fastest
     proxies:
-      - 🇭🇰 香港
-      - 🇨🇳 台湾
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
-      - 🇺🇲 美国
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇩🇪 德国
+      - 🇻🇪 德国
       - 🇫🇮 芬兰
       - 🇸🇪 瑞典
-      - 🇩🇰 丹麦
+      - 🇻🇰 丹麦
       - 🇳🇴 挪威
       - 🇨🇭 瑞士
       - 🇦🇹 奥地利
@@ -141,219 +141,276 @@ proxy-groups:
       - 🌐 其他节点
       - DIRECT
 
-  # ============== 以下所有国家地区分组 严格【离中国由近到远】排序 ==============
-  # 东亚近区
-  - name: 🇭🇰 香港
-    type: load-balance
+  # 地区分组
+  - name: 🇭🇰 中国香港
+    type: url-test
     include-all: true
     filter: (?i)港|HK|hk|Hong Kong|HongKong
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
-  - name: 🇨🇳 台湾
-    type: load-balance
+  - name: 🇨🇳 中国台湾
+    type: url-test
     include-all: true
     filter: (?i)台|TW|Taiwan|新北|彰化
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇰🇷 韩国
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)韩|首尔|KR|Korea|KOR|釜山
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇯🇵 日本
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)日本|JP|Japan|东京|大阪|埼玉|名古屋
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
-  # 东南亚
   - name: 🇸🇬 新加坡
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)新加坡|SG|Singapore|狮城
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
-  # 美洲
   - name: 🇺🇲 美国
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)美|US|United States|洛杉矶|硅谷|西雅图|芝加哥|达拉斯|凤凰城|圣何塞|纽约
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 600
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
-  # 东欧
   - name: 🇷🇺 俄罗斯
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)俄|RU|Russia|莫斯科
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
-  # 西欧/北欧 由近到远
   - name: 🇳🇱 荷兰
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)荷|NL|Netherlands|阿姆斯特丹
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
-  - name: 🇩🇪 德国
-    type: load-balance
+  - name: 🇻🇪 德国
+    type: url-test
     include-all: true
     filter: (?i)德|DE|Germany|柏林|法兰克福|慕尼黑
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇫🇮 芬兰
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)芬|FI|Finland|赫尔辛基
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇸🇪 瑞典
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)瑞典|SE|Sweden|斯德哥尔摩
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
-  - name: 🇩🇰 丹麦
-    type: load-balance
+  - name: 🇻🇰 丹麦
+    type: url-test
     include-all: true
     filter: (?i)丹|DK|Denmark|哥本哈根
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇳🇴 挪威
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)挪威|NO|Norway|奥斯陆
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇨🇭 瑞士
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)瑞|CH|Switzerland|苏黎世|日内瓦
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇦🇹 奥地利
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)奥|AT|Austria|维也纳
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇫🇷 法国
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)法|FR|France|巴黎|马赛
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇬🇧 英国
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)英|UK|United Kingdom|伦敦|伯明翰
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇮🇹 意大利
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)意|IT|Italy|米兰|罗马
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇪🇸 西班牙
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)西|ES|Spain|马德里|巴塞罗那
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
   - name: 🇵🇹 葡萄牙
-    type: load-balance
+    type: url-test
     include-all: true
     filter: (?i)葡|PT|Portugal|里斯本
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 650
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
-  # 兜底：其余所有剩余全部节点
   - name: 🌐 其他节点
-    type: load-balance
+    type: url-test
     include-all: true
     exclude-filter: (?i)港|HK|台湾|TW|韩国|KR|日本|JP|新加坡|SG|美国|US|俄罗斯|RU|荷兰|NL|德国|DE|芬兰|FI|瑞典|SE|丹麦|DK|挪威|NO|瑞士|CH|奥地利|AT|法国|FR|英国|UK|意大利|IT|西班牙|ES|葡萄牙|PT
     url: https://www.gstatic.com/generate_204
-    interval: 60
+    interval: 150
     tolerance: 50
-    strategy: round-robin
+    max-delay: 750
+    lazy: false
+    timeout: 2000
+    strategy: fastest
 
-  # 顶层主选择器（界面下拉菜单，智能自动依旧置顶）
+  # 手动选择
   - name: 🚀 节点选择
     type: select
     proxies:
       - ♻️ 智能自动
-      - 🇭🇰 香港
-      - 🇨🇳 台湾
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
       - 🇰🇷 韩国
       - 🇯🇵 日本
       - 🇸🇬 新加坡
       - 🇺🇲 美国
       - 🇷🇺 俄罗斯
       - 🇳🇱 荷兰
-      - 🇩🇪 德国
+      - 🇻🇪 德国
       - 🇫🇮 芬兰
       - 🇸🇪 瑞典
-      - 🇩🇰 丹麦
+      - 🇻🇰 丹麦
       - 🇳🇴 挪威
       - 🇨🇭 瑞士
       - 🇦🇹 奥地利
@@ -365,54 +422,525 @@ proxy-groups:
       - 🌐 其他节点
       - DIRECT
 
-  # ========== 全部应用分流 全部默认首选【智能自动】 ==========
+  # 原有APP
   - name: 📲 电报消息
-    type: select
+    type: url-test
+    url: https://cdn.jsdelivr.net/gh/telegramme-io/static/telegram_204.png
+    interval: 80
+    tolerance: 40
+    max-delay: 400
+    lazy: false
+    timeout: 2000
+    strategy: fastest
     proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇷🇺 俄罗斯
+      - 🇳🇱 荷兰
+      - 🇻🇪 德国
       - ♻️ 智能自动
       - DIRECT
+
   - name: 💬 Ai平台
-    type: select
+    type: url-test
+    url: https://api.openai.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 550
+    lazy: false
+    timeout: 2000
+    strategy: fastest
     proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇷🇺 俄罗斯
+      - 🇳🇱 荷兰
+      - 🇻🇪 德国
+      - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
+
   - name: 📹 油管视频
-    type: select
+    type: url-test
+    url: https://i.ytimg.com/generate_204
+    interval: 80
+    tolerance: 40
+    max-delay: 420
+    lazy: false
+    timeout: 2000
+    strategy: fastest
     proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇷🇺 俄罗斯
+      - 🇳🇱 荷兰
+      - 🇻🇪 德国
       - ♻️ 智能自动
       - DIRECT
+
   - name: 🎥 奈飞视频
-    type: select
+    type: url-test
+    url: https://netflix.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 480
+    lazy: false
+    timeout: 2000
+    strategy: fastest
     proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇷🇺 俄罗斯
+      - 🇳🇱 荷兰
+      - 🇻🇪 德国
+      - 🇺🇲 美国
       - ♻️ 智能自动
       - DIRECT
+
   - name: 📺 巴哈姆特
-    type: select
+    type: url-test
+    url: https://ani.gamer.com.tw/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 450
+    lazy: false
+    timeout: 2000
+    strategy: fastest
     proxies:
-      - 🇨🇳 台湾
+      - 🇨🇳 中国台湾
+      - 🇭🇰 中国香港
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇷🇺 俄罗斯
       - ♻️ 智能自动
       - DIRECT
+
   - name: 📺 哔哩哔哩
     type: select
     proxies:
       - DIRECT
-      - 🇭🇰 香港
-      - 🇨🇳 台湾
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+
   - name: 🌍 国外媒体
-    type: select
+    type: url-test
+    url: https://www.google.com/generate_204
+    interval: 80
+    tolerance: 40
+    max-delay: 430
+    lazy: false
+    timeout: 2000
+    strategy: fastest
     proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇷🇺 俄罗斯
+      - 🇳🇱 荷兰
+      - 🇻🇪 德国
       - ♻️ 智能自动
       - DIRECT
+
+  - name: 📢 谷歌FCM
+    type: url-test
+    url: https://firebase.googleapis.com/generate_204
+    interval: 80
+    tolerance: 40
+    max-delay: 400
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - ♻️ 智能自动
+      - DIRECT
+
+  # 新增社交
+  - name: 🐦 X(Twitter)
+    type: url-test
+    url: https://x.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 480
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 💬 WhatsApp
+    type: url-test
+    url: https://web.whatsapp.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 460
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 🎮 Discord
+    type: url-test
+    url: https://discord.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 520
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 📸 Instagram
+    type: url-test
+    url: https://www.instagram.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 480
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 👤 Facebook
+    type: url-test
+    url: https://www.facebook.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 📌 Pinterest
+    type: url-test
+    url: https://www.pinterest.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - ♻️ 智能自动
+      - DIRECT
+
+  # 新增AI
+  - name: 🤖 Claude AI
+    type: url-test
+    url: https://claude.ai/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 580
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 🤖 Gemini AI
+    type: url-test
+    url: https://gemini.google.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 480
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 🤖 Perplexity
+    type: url-test
+    url: https://www.perplexity.ai/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 580
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  # 新增流媒体
+  - name: 🎬 Disney+
+    type: url-test
+    url: https://disneyplus.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 520
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 🎬 Prime Video
+    type: url-test
+    url: https://primevideo.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 540
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 🎬 HBO Max
+    type: url-test
+    url: https://www.max.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 540
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 🎵 Spotify
+    type: url-test
+    url: https://open.spotify.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 480
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - ♻️ 智能自动
+      - DIRECT
+
+  # 新增网盘
+  - name: ☁️ Google Drive
+    type: url-test
+    url: https://drive.google.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 480
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: ☁️ Dropbox
+    type: url-test
+    url: https://www.dropbox.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - ♻️ 智能自动
+      - DIRECT
+
+  # 新增搜索&百科
+  - name: 🔍 DuckDuckGo
+    type: url-test
+    url: https://duckduckgo.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 460
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 📚 维基百科
+    type: url-test
+    url: https://wikipedia.org/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 440
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - ♻️ 智能自动
+      - DIRECT
+
+  # 新增游戏直播
+  - name: 🎥 Twitch
+    type: url-test
+    url: https://www.twitch.tv/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 520
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  - name: 🎮 R星游戏
+    type: url-test
+    url: https://socialclub.rockstargames.com/favicon.ico
+    interval: 80
+    tolerance: 40
+    max-delay: 550
+    lazy: false
+    timeout: 2000
+    strategy: fastest
+    proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇺🇲 美国
+      - ♻️ 智能自动
+      - DIRECT
+
+  # 国内服务
   - name: 🌏 国内媒体
     type: select
     proxies:
       - DIRECT
       - ♻️ 智能自动
-  - name: 📢 谷歌FCM
-    type: select
-    proxies:
-      - DIRECT
-      - ♻️ 智能自动
+
   - name: Ⓜ️ 微软Bing
     type: select
     proxies:
@@ -428,26 +956,31 @@ proxy-groups:
     proxies:
       - DIRECT
       - ♻️ 智能自动
+
   - name: 🍎 苹果服务
     type: select
     proxies:
       - DIRECT
       - ♻️ 智能自动
+
   - name: 🎮 游戏平台
     type: select
     proxies:
       - DIRECT
       - ♻️ 智能自动
+
   - name: 🎶 网易音乐
     type: select
     proxies:
       - DIRECT
       - ♻️ 智能自动
+
   - name: 🎯 全球直连
     type: select
     proxies:
       - DIRECT
       - ♻️ 智能自动
+
   - name: 🛑 广告拦截
     type: select
     proxies:
@@ -458,13 +991,28 @@ proxy-groups:
     proxies:
       - REJECT
       - DIRECT
+
   - name: 🐟 漏网之鱼
-    type: select
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 100
+    tolerance: 50
+    max-delay: 500
+    lazy: false
+    timeout: 2000
+    strategy: fastest
     proxies:
+      - 🇭🇰 中国香港
+      - 🇨🇳 中国台湾
+      - 🇰🇷 韩国
+      - 🇯🇵 日本
+      - 🇸🇬 新加坡
+      - 🇷🇺 俄罗斯
+      - 🇳🇱 荷兰
+      - 🇻🇪 德国
       - ♻️ 智能自动
       - DIRECT
 
-# 规则集（全部原版完整保留无修改）
 rule-providers:
   LocalAreaNetwork:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/LocalAreaNetwork.list
@@ -684,7 +1232,6 @@ rule-providers:
     format: text
     type: http
 
-# 规则（原版完整保留，含办公域名专属直连）
 rules:
   - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
   - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
@@ -694,10 +1241,12 @@ rules:
   - DOMAIN-KEYWORD,app.5ddd.com,DIRECT
   - PROCESS-NAME,subs-check.exe,🎯 全球直连
   - PROCESS-NAME,subs-check,🎯 全球直连
+
   - RULE-SET,LocalAreaNetwork,🎯 全球直连
   - RULE-SET,UnBan,🎯 全球直连
   - RULE-SET,BanAD,🛑 广告拦截
   - RULE-SET,BanProgramAD,🍃 应用净化
+
   - RULE-SET,GoogleFCM,📢 谷歌FCM
   - RULE-SET,GoogleCN,🎯 全球直连
   - RULE-SET,SteamCN,🎯 全球直连
@@ -720,6 +1269,33 @@ rules:
   - RULE-SET,Bilibili,📺 哔哩哔哩
   - RULE-SET,ChinaMedia,🌏 国内媒体
   - RULE-SET,ProxyMedia,🌍 国外媒体
+
+  - DOMAIN-SUFFIX,x.com,🐦 X(Twitter)
+  - DOMAIN-SUFFIX,twitter.com,🐦 X(Twitter)
+  - DOMAIN-SUFFIX,whatsapp.com,💬 WhatsApp
+  - DOMAIN-SUFFIX,discord.com,🎮 Discord
+  - DOMAIN-SUFFIX,instagram.com,📸 Instagram
+  - DOMAIN-SUFFIX,facebook.com,👤 Facebook
+  - DOMAIN-SUFFIX,pinterest.com,📌 Pinterest
+
+  - DOMAIN-SUFFIX,claude.ai,🤖 Claude AI
+  - DOMAIN-SUFFIX,gemini.google.com,🤖 Gemini AI
+  - DOMAIN-SUFFIX,perplexity.ai,🤖 Perplexity
+
+  - DOMAIN-SUFFIX,disneyplus.com,🎬 Disney+
+  - DOMAIN-SUFFIX,primevideo.com,🎬 Prime Video
+  - DOMAIN-SUFFIX,max.com,🎬 HBO Max
+  - DOMAIN-SUFFIX,spotify.com,🎵 Spotify
+
+  - DOMAIN-SUFFIX,drive.google.com,☁️ Google Drive
+  - DOMAIN-SUFFIX,dropbox.com,☁️ Dropbox
+
+  - DOMAIN-SUFFIX,duckduckgo.com,🔍 DuckDuckGo
+  - DOMAIN-SUFFIX,wikipedia.org,📚 维基百科
+
+  - DOMAIN-SUFFIX,twitch.tv,🎥 Twitch
+  - DOMAIN-SUFFIX,rockstargames.com,🎮 R星游戏
+
   - RULE-SET,ProxyGFWlist,🚀 节点选择
   - RULE-SET,ChinaDomain,🎯 全球直连
   - RULE-SET,ChinaCompanyIp,🎯 全球直连
