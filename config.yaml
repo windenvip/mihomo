@@ -11,18 +11,20 @@ log-level: info
 external-controller: '0.0.0.0:9090'
 secret: ''
 
-# 全局统一延迟、TCP并发优化
+# 全局统一延迟、TCP并发、连接优化
 unified-delay: true
 tcp-concurrent: true
 keep-alive-interval: 30
 
-# ========== 新增：全局自动隐藏不可用节点 核心总开关 ==========
-# 所有select下拉组自动隐藏无可用节点的空分组
+# ========== 全局隐藏不可用节点 总开关 ==========
 disable-empty-select: true
-# include-all继承节点时，自动过滤全部失效死节点
 filter-empty-proxies: true
 
-# TUN 模式新版标准优化配置
+# ========== 全局节点质量优化（解决延迟低但网速慢） ==========
+probe-size: 64
+max-retries: 2
+
+# TUN 模式稳定配置
 tun:
   enable: true
   stack: mixed
@@ -134,21 +136,26 @@ dns:
       - +.openai.com
 
 # ==============================================
-# 【精简版代理分组】全部新增 hide-unavailable: true 自动隐藏不可用节点
-# 国家地区组、智能组、业务组全部生效，无可用节点自动隐藏整组
+# 代理分组
+# 【1】所有国家地区分组：后台保留节点池、正则筛选、测速、隐藏死节点
+# 【2】**全部从UI下拉菜单彻底剔除，界面完全不显示任何地区**
+# 【3】智能组硬编码【离中国由近→远】优先级链，后台严格按地缘顺序切换
+# 优先级：香港 > 台湾 > 韩国 > 日本 > 新加坡 > 越南 > 印尼 > 马来西亚 > 美国 > 欧洲
 # ==============================================
 proxy-groups:
-  # 全局智能优选（自动最快节点）
+  # 全局智能自动（主用分组，硬编码地理远近优先级）
+  # 优先最近地区最优节点，当前地区差/慢/无节点自动往下一个更远地区切换
   - name: ♻️ 智能自动
     type: url-test
     url: https://www.gstatic.com/generate_204
-    interval: 90
-    tolerance: 50
-    max-delay: 450
+    interval: 60
+    tolerance: 80
+    max-delay: 500
     lazy: false
-    timeout: 2000
-    strategy: fastest
+    timeout: 1500
+    strategy: balanced
     hide-unavailable: true
+    # 【严格硬排序：离中国 由近 → 远】固定优先级，后台执行，界面不展示子分组
     proxies:
       - 🇭🇰 中国香港
       - 🇨🇳 中国台湾
@@ -165,16 +172,17 @@ proxy-groups:
       - 🌐 其他节点
       - DIRECT
 
-  # ========== 完整国家地区分组（全部保留原正则+测速+新增隐藏死节点） ==========
+  # ========== 后台地区节点池（仅后台运行，**所有UI下拉完全不显示**） ==========
+  # 仅负责节点筛选、测速、隐藏死节点，不参与前端展示
   - name: 🇭🇰 中国香港
     type: url-test
     include-all: true
     filter: (?i)港|HK|hk|Hong Kong|HongKong
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 500
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 550
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇨🇳 中国台湾
@@ -182,10 +190,10 @@ proxy-groups:
     include-all: true
     filter: (?i)台|TW|tw|Taiwan|taiwan|新北|彰化|臺灣
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 500
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 550
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇰🇷 韩国
@@ -193,10 +201,10 @@ proxy-groups:
     include-all: true
     filter: (?i)韩|首尔|KR|kr|Korea|KOR|釜山
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 500
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 550
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇯🇵 日本
@@ -204,10 +212,10 @@ proxy-groups:
     include-all: true
     filter: (?i)日本|JP|jp|Japan|东京|大阪|埼玉|名古屋
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 500
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 550
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇸🇬 新加坡
@@ -215,10 +223,10 @@ proxy-groups:
     include-all: true
     filter: (?i)新加坡|SG|sg|Singapore|狮城
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 500
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 550
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇻🇳 越南
@@ -226,10 +234,10 @@ proxy-groups:
     include-all: true
     filter: (?i)越南|VN|vn|Vietnam|海阳
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 450
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 500
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇮🇩 印尼
@@ -237,10 +245,10 @@ proxy-groups:
     include-all: true
     filter: (?i)印尼|ID|id|Indonesia
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 500
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 550
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇲🇾 马来西亚
@@ -248,10 +256,10 @@ proxy-groups:
     include-all: true
     filter: (?i)马来西亚|MY|my|Malaysia
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 500
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 550
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇺🇲 美国
@@ -259,10 +267,10 @@ proxy-groups:
     include-all: true
     filter: (?i)美|US|us|United States|洛杉矶|纽约
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 600
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 650
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇷🇺 俄罗斯
@@ -270,10 +278,10 @@ proxy-groups:
     include-all: true
     filter: (?i)俄|RU|ru|Russia|莫斯科
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 650
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 700
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇳🇱 荷兰
@@ -281,10 +289,10 @@ proxy-groups:
     include-all: true
     filter: (?i)荷|NL|nl|Netherlands
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 650
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 700
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🇩🇪 德国
@@ -292,10 +300,10 @@ proxy-groups:
     include-all: true
     filter: (?i)德|DE|de|Germany
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
-    max-delay: 650
-    strategy: fastest
+    interval: 120
+    tolerance: 80
+    max-delay: 700
+    strategy: balanced
     hide-unavailable: true
 
   - name: 🌐 其他节点
@@ -303,96 +311,95 @@ proxy-groups:
     include-all: true
     exclude-filter: (?i)港|HK|台湾|TW|韩国|KR|日本|JP|新加坡|SG|越南|VN|印尼|ID|马来西亚|MY|美国|US|俄罗斯|RU|荷兰|NL|德国|DE
     url: https://www.gstatic.com/generate_204
-    interval: 150
-    tolerance: 50
+    interval: 120
+    tolerance: 80
     max-delay: 750
-    strategy: fastest
+    strategy: balanced
     hide-unavailable: true
 
   # ==============================================
-  # 【主切换菜单 极度精简】下拉自动隐藏无可用节点分组
-  # 原始：智能自动、港、台、日、新、美、直连
-  # 某地区全部节点失效 → 该国家分组直接从下拉消失
+  # 【极致极简主切换菜单】前端UI仅3项，**无任何国家/地区分组**
+  # 所有地区全部后台隐藏，用户无需手动选地区，全自动按远近择优
   # ==============================================
   - name: 🚀 节点选择
     type: select
     proxies:
       - ♻️ 智能自动
-      - 🇭🇰 中国香港
-      - 🇨🇳 中国台湾
-      - 🇯🇵 日本
-      - 🇸🇬 新加坡
-      - 🇺🇲 美国
       - DIRECT
 
   # ==============================================
-  # 【合并精简业务分组】全部新增隐藏参数，无可用节点自动隐藏整组
+  # 业务应用分组（全部沿用精简合并，统一走智能组优先级）
+  # 全部继承：地理远近优先 + 网速优先 + 自动切换慢节点 + 隐藏无效节点
   # ==============================================
   - name: 📲 电报消息
     type: url-test
     url: https://cdn.jsdelivr.net/gh/telegramme-io/static/telegram_204.png
-    interval: 80
-    tolerance: 40
-    max-delay: 400
-    strategy: fastest
+    interval: 60
+    tolerance: 60
+    max-delay: 450
+    timeout: 1500
+    strategy: balanced
     hide-unavailable: true
     proxies:
-      - 🚀 节点选择
+      - ♻️ 智能自动
       - DIRECT
 
   - name: 🎬 海外影视
     type: url-test
     url: https://i.ytimg.com/generate_204
-    interval: 80
-    tolerance: 40
-    max-delay: 450
-    strategy: fastest
+    interval: 60
+    tolerance: 60
+    max-delay: 500
+    timeout: 1500
+    strategy: balanced
     hide-unavailable: true
     proxies:
-      - 🚀 节点选择
+      - ♻️ 智能自动
       - DIRECT
 
   - name: 💬 AI全能
     type: url-test
     url: https://api.openai.com/favicon.ico
-    interval: 80
-    tolerance: 40
-    max-delay: 550
-    strategy: fastest
+    interval: 60
+    tolerance: 60
+    max-delay: 600
+    timeout: 1500
+    strategy: balanced
     hide-unavailable: true
     proxies:
-      - 🚀 节点选择
+      - ♻️ 智能自动
       - DIRECT
 
   - name: 🌍 海外通用
     type: url-test
     url: https://www.google.com/generate_204
-    interval: 80
-    tolerance: 40
-    max-delay: 430
-    strategy: fastest
+    interval: 60
+    tolerance: 60
+    max-delay: 480
+    timeout: 1500
+    strategy: balanced
     hide-unavailable: true
     proxies:
-      - 🚀 节点选择
+      - ♻️ 智能自动
       - DIRECT
 
   - name: 📺 哔哩哔哩
     type: select
     proxies:
       - DIRECT
-      - 🇭🇰 中国香港
-      - 🇨🇳 中国台湾
+      - ♻️ 智能自动
 
   - name: 📢 谷歌FCM
     type: url-test
     url: https://firebase.googleapis.com/generate_204
-    interval: 80
-    tolerance: 40
-    max-delay: 400
-    strategy: fastest
+    interval: 60
+    tolerance: 60
+    max-delay: 450
+    timeout: 1500
+    strategy: balanced
     hide-unavailable: true
     proxies:
-      - 🚀 节点选择
+      - ♻️ 智能自动
       - DIRECT
 
   # 国内基础服务
@@ -413,16 +420,17 @@ proxy-groups:
   - name: 🐟 漏网之鱼
     type: url-test
     url: https://www.gstatic.com/generate_204
-    interval: 100
-    tolerance: 50
-    max-delay: 500
-    strategy: fastest
+    interval: 80
+    tolerance: 60
+    max-delay: 550
+    timeout: 1500
+    strategy: balanced
     hide-unavailable: true
     proxies:
-      - 🚀 节点选择
+      - ♻️ 智能自动
       - DIRECT
 
-# 规则集全部保留原版稳定配置
+# 规则集完整全部保留
 rule-providers:
   LocalAreaNetwork:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/LocalAreaNetwork.list
@@ -473,34 +481,6 @@ rule-providers:
     interval: 86400
     format: text
     type: http
-  Bing:
-    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Bing.list
-    path: ./ruleset/Bing.list
-    behavior: classical
-    interval: 86400
-    format: text
-    type: http
-  OneDrive:
-    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/OneDrive.list
-    path: ./ruleset/OneDrive.list
-    behavior: classical
-    interval: 86400
-    format: text
-    type: http
-  Microsoft:
-    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Microsoft.list
-    path: ./ruleset/Microsoft.list
-    behavior: classical
-    interval: 86400
-    format: text
-    type: http
-  Apple:
-    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Apple.list
-    path: ./ruleset/Apple.list
-    behavior: classical
-    interval: 86400
-    format: text
-    type: http
   Telegram:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Telegram.list
     path: ./ruleset/Telegram.list
@@ -518,20 +498,6 @@ rule-providers:
   OpenAi:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/OpenAi.list
     path: ./ruleset/OpenAi.list
-    behavior: classical
-    interval: 86400
-    format: text
-    type: http
-  NetEaseMusic:
-    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/NetEaseMusic.list
-    path: ./ruleset/NetEaseMusic.list
-    behavior: classical
-    interval: 86400
-    format: text
-    type: http
-  Steam:
-    url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Steam.list
-    path: ./ruleset/Steam.list
     behavior: classical
     interval: 86400
     format: text
@@ -600,7 +566,7 @@ rule-providers:
     format: text
     type: http
 
-# 精简优化版规则 优先级清晰 无冗余
+# 规则体系优先级完全保留最优
 rules:
   # 本地内网直连
   - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
@@ -635,7 +601,6 @@ rules:
   - RULE-SET,ChinaMedia,🌏 国内直连
   - RULE-SET,ProxyMedia,🌍 海外通用
 
-  # 剩余所有海外网站统一走海外通用分组
   - RULE-SET,ProxyGFWlist,🌍 海外通用
 
   # 国内域名IP全部直连
