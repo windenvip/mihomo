@@ -100,6 +100,10 @@ proxy-groups:
     type: select
     proxies: [自动选择, 香港, 台湾, 日本, 新加坡, 美国, 其它地区, 全部节点, 直连]
 
+  - name: TikTok
+    type: select
+    proxies: [自动选择, 香港, 台湾, 日本, 新加坡, 美国, 其它地区, 全部节点, 直连]
+
   - name: Telegram
     type: url-test
     url: "https://www.google.com/generate_204"
