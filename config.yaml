@@ -41,7 +41,7 @@ proxy-providers:
     interval: 21600
     path: ./proxy/kooker.yaml
     health-check:
-      enable: true
+      enable: false
       url: https://www.gstatic.com/generate_204
       interval: 300
   nodesfree:
@@ -50,7 +50,7 @@ proxy-providers:
     interval: 21600
     path: ./proxy/nodesfree.yaml
     health-check:
-      enable: true
+      enable: false
       url: https://www.gstatic.com/generate_204
       interval: 300
 
