@@ -88,7 +88,6 @@ dns:
       - "https://dns.cloudflare.com/dns-query"
       - "https://dns.google/dns-query"
 
-
 proxy-groups:
   - name: "\U0001F680 节点选择"
     type: select
@@ -258,6 +257,19 @@ proxy-groups:
       - "\U0001F1EF\U0001F1F5 日本节点"
       - "\U0001F1F0\U0001F1F7 韩国节点"
       - "\U0001F680 手动切换"
+  - name: "\U0001F419 GitHub"
+    type: select
+    proxies:
+      - "\U0001F680 节点选择"
+      - ♻️ 自动选择
+      - "\U0001F1F8\U0001F1EC 狮城节点"
+      - "\U0001F1ED\U0001F1F0 香港节点"
+      - "\U0001F1E8\U0001F1F3 台湾节点"
+      - "\U0001F1EF\U0001F1F5 日本节点"
+      - "\U0001F1FA\U0001F1F2 美国节点"
+      - "\U0001F1F0\U0001F1F7 韩国节点"
+      - "\U0001F680 手动切换"
+      - DIRECT
   - name: "\U0001F3AE 游戏平台"
     type: select
     proxies:
@@ -347,6 +359,7 @@ proxy-groups:
     include-all: true
     filter: (?i)NF|奈飞|解锁|Netflix|NETFLIX|Media
     type: select
+
 rule-providers:
   LocalAreaNetwork:
     url: >-
@@ -592,6 +605,15 @@ rule-providers:
     interval: 86400
     format: text
     type: http
+  GitHub:
+    url: >-
+      https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/GitHub.list
+    path: ./ruleset/GitHub.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+
 rules:
   - "PROCESS-NAME,subs-check.exe,\U0001F3AF 全球直连"
   - "PROCESS-NAME,subs-check,\U0001F3AF 全球直连"
@@ -607,6 +629,7 @@ rules:
   - 'RULE-SET,Microsoft,Ⓜ️ 微软服务'
   - "RULE-SET,Apple,\U0001F34E 苹果服务"
   - "RULE-SET,Telegram,\U0001F4F2 电报消息"
+  - "RULE-SET,GitHub,\U0001F419 GitHub"
   - "RULE-SET,AI,\U0001F4AC Ai平台"
   - "RULE-SET,NetEaseMusic,\U0001F3B6 网易音乐"
   - "RULE-SET,Epic,\U0001F3AE 游戏平台"
@@ -626,4 +649,4 @@ rules:
   - "RULE-SET,ChinaCompanyIp,\U0001F3AF 全球直连"
   - "RULE-SET,Download,\U0001F3AF 全球直连"
   - "GEOIP,CN,\U0001F3AF 全球直连"
-  - "MATCH,🐟 漏网之鱼"
+  - "MATCH,\U0001F41F 漏网之鱼"
