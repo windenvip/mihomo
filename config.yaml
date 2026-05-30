@@ -22,7 +22,7 @@ tun:
   auto-redirect: true
   auto-detect-interface: true
 
-# 代理提供者（强化健康检查，自动剔除超时节点）
+# 代理订阅
 proxy-providers:
   shaoyouvip:
     type: http
@@ -32,8 +32,7 @@ proxy-providers:
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
-      interval: 180
-      timeout: 3000
+      interval: 300
   kooker:
     type: http
     url: "https://ghproxy.net/https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/mihomo.yaml"
@@ -42,8 +41,7 @@ proxy-providers:
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
-      interval: 180
-      timeout: 3000
+      interval: 300
   nodesfree:
     type: http
     url: "https://ghproxy.net/https://raw.githubusercontent.com/nodesfree/clashnode/refs/heads/main/clash.yaml"
@@ -52,10 +50,9 @@ proxy-providers:
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
-      interval: 180
-      timeout: 3000
+      interval: 300
 
-# 地理数据源
+# 地理数据
 geodata-mode: true
 geox-url:
   geoip: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip-lite.dat"
@@ -63,7 +60,7 @@ geox-url:
   mmdb: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country-lite.mmdb"
   asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
 
-# DNS配置
+# DNS
 dns:
   enable: true
   ipv6: true
@@ -91,21 +88,22 @@ dns:
       - "https://dns.cloudflare.com/dns-query"
       - "https://dns.google/dns-query"
 
-# 代理分组
+# 代理分组（核心：每个应用默认自动，且内置全部节点可单独手动切换）
 proxy-groups:
+  # 全局默认
   - name: 默认
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
   - name: Google
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
   - name: TikTok
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
   - name: Telegram
@@ -119,60 +117,49 @@ proxy-groups:
 
   - name: Twitter
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
   - name: 哔哩哔哩
     type: select
-    proxies: [直连, 自动选择, 延迟排序]
+    proxies: [直连, 自动选择]
     include-all: true
 
   - name: 巴哈姆特
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
   - name: YouTube
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
   - name: NETFLIX
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
   - name: Spotify
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
   - name: Github
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
   - name: 其他
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [自动选择, 直连]
     include-all: true
 
-  # 自动择优，仅使用健康检测存活节点
+  # 自动优选节点（排除国内线路）
   - name: 自动选择
     type: url-test
-    url: https://www.gstatic.com/generate_204
-    interval: 180
+    include-all: true
     tolerance: 10
-    include-all: true
-    exclude-filter: "(?i)回国|cn|china|移动|联通|电信"
-
-  # 延迟排序，自动过滤超时节点
-  - name: 延迟排序
-    type: url-test
-    url: https://www.gstatic.com/generate_204
-    interval: 180
-    tolerance: 1000
-    include-all: true
     exclude-filter: "(?i)回国|cn|china|移动|联通|电信"
 
   # 国内节点组
@@ -186,7 +173,7 @@ proxies:
     type: direct
     udp: true
 
-# 规则
+# 规则部分（保持原有分流逻辑不变）
 rules:
   - GEOIP,lan,直连,no-resolve
   - GEOSITE,private,直连,no-resolve
