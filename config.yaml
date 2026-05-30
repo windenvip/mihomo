@@ -1,5 +1,5 @@
 # ==============================================
-# 基础配置（固定头部，避免语法错误）
+# 基础配置
 # ==============================================
 mixed-port: 7890
 socks-port: 7891
@@ -74,31 +74,32 @@ dns:
     - "+.local"
     - "+.market.xiaomi.com"
   nameserver:
-    - https://120.53.53.53/dns-query
+    - https://120.53.53/dns-query
     - https://223.5.5.5/dns-query
   proxy-server-nameserver:
-    - https://120.53.53.53/dns-query
+    - https://120.53.53/dns-query
     - https://223.5.5.5/dns-query
   nameserver-policy:
     "geosite:cn,private":
-      - https://120.53.53.53/dns-query
+      - https://120.53.53/dns-query
       - https://223.5.5.5/dns-query
     "geosite:geolocation-!cn":
-      - "https://dns.cloudflare.com/dns-query"
-      - "https://dns.google/dns-query"
+      - https://dns.cloudflare.com/dns-query
+      - https://dns.google/dns-query
     "geosite:telegram":
-      - "https://dns.cloudflare.com/dns-query"
-      - "https://dns.google/dns-query"
+      - https://dns.cloudflare.com/dns-query
+      - https://dns.google/dns-query
 
 # ==============================================
-# 分组配置（已修正所有名称不匹配问题）
+# 分组配置（保留emoji、语法已修正）
 # ==============================================
 proxy-groups:
-  # 全局总开关（默认选中：自动选择）
+  # 全局总开关（默认：自动选择）
   - name: "\U0001F680 节点总开关"
     type: select
     proxies:
       - ♻️ 自动选择
+      - "\U0001F680 手动切换"
       - "\U0001F1ED\U0001F1F0 香港"
       - "\U0001F1E8\U0001F1F3 台湾"
       - "\U0001F1F8\U0001F1EC 新加坡"
@@ -116,7 +117,6 @@ proxy-groups:
       - "\U0001F1E6\U0001F1FA 澳洲"
       - "\U0001F1E8\U0001F1E6 加拿大"
       - "\U0001F4E6 其他节点"
-      - "\U0001F680 手动切换"
       - DIRECT
 
   - name: ♻️ 自动选择
@@ -129,7 +129,7 @@ proxy-groups:
     include-all: true
     type: select
 
-  # ========== 【第一部分：常用APP/网站（置顶） ==========
+  # ========== 常用APP置顶 ==========
   - name: "\U0001F4F2 电报消息"
     type: select
     proxies:
@@ -431,7 +431,7 @@ proxy-groups:
       - "\U0001F4E6 其他节点"
       - DIRECT
 
-  - name: Ⓜ️ 微软Bing
+  - name: "Ⓜ️ 微软Bing"
     type: select
     proxies:
       - "\U0001F680 节点总开关"
@@ -456,7 +456,7 @@ proxy-groups:
       - "\U0001F4E6 其他节点"
       - DIRECT
 
-  - name: Ⓜ️ 微软云盘
+  - name: "Ⓜ️ 微软云盘"
     type: select
     proxies:
       - "\U0001F680 节点总开关"
@@ -481,7 +481,7 @@ proxy-groups:
       - "\U0001F4E6 其他节点"
       - DIRECT
 
-  - name: Ⓜ️ 微软服务
+  - name: "Ⓜ️ 微软服务"
     type: select
     proxies:
       - "\U0001F680 节点总开关"
@@ -543,7 +543,7 @@ proxy-groups:
       - "\U0001F1EF\U0001F1F5 日本"
       - "\U0001F1FA\U0001F1F2 美国"
       - "\U0001F1F0\U0001F1F7 韩国"
-      - "\U0001F1F2\UF1F2\U0001F1FE 马来西亚"
+      - "\U0001F1F2\U0001F1FE 马来西亚"
       - "\U0001F1F5\U0001F1F3 菲律宾"
       - "\U0001F1EE\U0001F1E9 印尼"
       - "\U0001F1F9\U0001F1ED 泰国"
@@ -581,7 +581,7 @@ proxy-groups:
       - "\U0001F4E6 其他节点"
       - DIRECT
 
-  # ========== 【第二部分：国家/地区节点分组】 ==========
+  # ========== 国家/地区节点 ==========
   - name: "\U0001F1ED\U0001F1F0 香港"
     include-all: true
     filter: (?i)香港|HK|HongKong
@@ -706,7 +706,7 @@ proxy-groups:
     interval: 300
     tolerance: 50
 
-  # ========== 【第三部分：通用/拦截分组】 ==========
+  # ========== 通用 ==========
   - name: "\U0001F3AF 全球直连"
     type: select
     proxies:
@@ -752,7 +752,7 @@ proxy-groups:
       - DIRECT
 
 # ==============================================
-# 规则集配置
+# 规则集
 # ==============================================
 rule-providers:
   LocalAreaNetwork:
@@ -994,7 +994,9 @@ rule-providers:
     format: text
     type: http
 
+# ==============================================
 # 分流规则
+# ==============================================
 rules:
   - "PROCESS-NAME,subs-check.exe,\U0001F3AF 全球直连"
   - "PROCESS-NAME,subs-check,\U0001F3AF 全球直连"
