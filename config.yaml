@@ -35,24 +35,6 @@ proxy-providers:
       enable: true
       url: https://www.gstatic.com/generate_204
       interval: 300
-#  kooker:
-#    type: http
-#    url: "https://ghproxy.net/https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/mihomo.yaml"
-#    interval: 21600
-#    path: ./proxy/kooker.yaml
-#    health-check:
-#      enable: false
-#      url: https://www.gstatic.com/generate_204
-#      interval: 300
-#  nodesfree:
-#    type: http
-#    url: "https://ghproxy.net/https://raw.githubusercontent.com/nodesfree/clashnode/refs/heads/main/clash.yaml"
-#    interval: 21600
-#    path: ./proxy/nodesfree.yaml
-#    health-check:
-#      enable: false
-#      url: https://www.gstatic.com/generate_204
-#      interval: 300
 
 # 地理数据源
 geodata-mode: true
@@ -1035,4 +1017,3 @@ rules:
   - "RULE-SET,Download,\U0001F3AF 全球直连"
   - "GEOIP,CN,\U0001F3AF 全球直连"
   - "MATCH,\U0001F41F 漏网之鱼"
-
