@@ -95,26 +95,40 @@ proxy-groups:
       - ♻️ 自动选择
       - "\U0001F1ED\U0001F1F0 香港节点"
       - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F1EF\U0001F1F5 日本节点"
       - "\U0001F1FA\U0001F1F2 美国节点"
       - "\U0001F1F0\U0001F1F7 韩国节点"
+      - "\U0001F1F2\U0001F1FE 马来西亚"
+      - "\U0001F1F5\U0001F1F3 菲律宾"
+      - "\U0001F1EE\U0001F1E9 印尼"
+      - "\U0001F1F9\U0001F1ED 泰国"
+      - "\U0001F1FB\U0001F1F3 越南"
+      - "\U0001F1EC\U0001F1E7 英国"
+      - "\U0001F1E9\U0001F1EA 德国"
+      - "\U0001F1EB\U0001F1F7 法国"
+      - "\U0001F1E6\U0001F1FA 澳洲"
+      - "\U0001F1E8\U0001F1E6 加拿大"
       - "\U0001F680 手动切换"
       - DIRECT
+
   - name: "\U0001F680 手动切换"
     include-all: true
     type: select
+
   - name: ♻️ 自动选择
     type: url-test
     include-all: true
     interval: 300
     tolerance: 50
+
+  # 原有业务分组
   - name: "\U0001F4F2 电报消息"
     type: select
     proxies:
       - "\U0001F680 节点选择"
       - ♻️ 自动选择
-      - "\U0001F1F8\U0001F1EC 狮城节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F1ED\U0001F1F0 香港节点"
       - "\U0001F1E8\U0001F1F3 台湾节点"
       - "\U0001F1EF\U0001F1F5 日本节点"
@@ -122,12 +136,13 @@ proxy-groups:
       - "\U0001F1F0\U0001F1F7 韩国节点"
       - "\U0001F680 手动切换"
       - DIRECT
+
   - name: "\U0001F4AC Ai平台"
     type: select
     proxies:
       - "\U0001F680 节点选择"
       - ♻️ 自动选择
-      - "\U0001F1F8\U0001F1EC 狮城节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F1ED\U0001F1F0 香港节点"
       - "\U0001F1E8\U0001F1F3 台湾节点"
       - "\U0001F1EF\U0001F1F5 日本节点"
@@ -135,33 +150,32 @@ proxy-groups:
       - "\U0001F1F0\U0001F1F7 韩国节点"
       - "\U0001F680 手动切换"
       - DIRECT
+
   - name: "\U0001F4F9 油管视频"
     type: select
     proxies:
       - "\U0001F680 节点选择"
       - ♻️ 自动选择
-      - "\U0001F1F8\U0001F1EC 狮城节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
       - "\U0001F1EF\U0001F1F5 日本节点"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
       - "\U0001F680 手动切换"
       - DIRECT
+
   - name: "\U0001F3A5 奈飞视频"
     type: select
     proxies:
       - "\U0001F680 节点选择"
       - ♻️ 自动选择
       - "\U0001F3A5 奈飞节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
       - "\U0001F1EF\U0001F1F5 日本节点"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
       - "\U0001F680 手动切换"
       - DIRECT
+
   - name: "\U0001F4FA 巴哈姆特"
     type: select
     proxies:
@@ -169,119 +183,123 @@ proxy-groups:
       - "\U0001F680 节点选择"
       - "\U0001F680 手动切换"
       - DIRECT
+
   - name: "\U0001F4FA 哔哩哔哩"
     type: select
     proxies:
       - "\U0001F3AF 全球直连"
       - "\U0001F1E8\U0001F1F3 台湾节点"
       - "\U0001F1ED\U0001F1F0 香港节点"
+
   - name: "\U0001F30D 国外媒体"
     type: select
     proxies:
       - "\U0001F680 节点选择"
       - ♻️ 自动选择
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
       - "\U0001F1EF\U0001F1F5 日本节点"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
       - "\U0001F680 手动切换"
       - DIRECT
+
   - name: "\U0001F30F 国内媒体"
     type: select
     proxies:
       - DIRECT
       - "\U0001F1ED\U0001F1F0 香港节点"
       - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
       - "\U0001F680 手动切换"
+
   - name: "\U0001F4E2 谷歌FCM"
     type: select
     proxies:
       - DIRECT
       - "\U0001F680 节点选择"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F680 手动切换"
+
   - name: Ⓜ️ 微软Bing
     type: select
     proxies:
       - DIRECT
       - "\U0001F680 节点选择"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F680 手动切换"
+
   - name: Ⓜ️ 微软云盘
     type: select
     proxies:
       - DIRECT
       - "\U0001F680 节点选择"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F680 手动切换"
+
   - name: Ⓜ️ 微软服务
     type: select
     proxies:
       - "\U0001F680 节点选择"
       - DIRECT
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F680 手动切换"
+
   - name: "\U0001F34E 苹果服务"
     type: select
     proxies:
       - DIRECT
       - "\U0001F680 节点选择"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F680 手动切换"
+
   - name: "\U0001F419 GitHub"
     type: select
     proxies:
       - "\U0001F680 节点选择"
       - ♻️ 自动选择
-      - "\U0001F1F8\U0001F1EC 狮城节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
+      - "\U0001F1EC\U0001F1E7 英国"
       - "\U0001F680 手动切换"
       - DIRECT
+
+  - name: "\U0001F4F1 GooglePlay"
+    type: select
+    proxies:
+      - "\U0001F680 节点选择"
+      - ♻️ 自动选择
+      - "\U0001F1FA\U0001F1F2 美国节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
+      - "\U0001F1EF\U0001F1F5 日本节点"
+      - "\U0001F680 手动切换"
+      - DIRECT
+
+  - name: "\U0001F4E8 TikTok"
+    type: select
+    proxies:
+      - "\U0001F680 节点选择"
+      - ♻️ 自动选择
+      - "\U0001F1F8\U0001F1EC 新加坡"
+      - "\U0001F1ED\U0001F1F0 香港节点"
+      - "\U0001F1EF\U0001F1F5 日本节点"
+      - "\U0001F1F9\U0001F1ED 泰国"
+      - "\U0001F680 手动切换"
+      - DIRECT
+
   - name: "\U0001F3AE 游戏平台"
     type: select
     proxies:
       - DIRECT
       - "\U0001F680 节点选择"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F680 手动切换"
+
   - name: "\U0001F3B6 网易音乐"
     type: select
     include-all: true
@@ -290,46 +308,26 @@ proxy-groups:
       - DIRECT
       - "\U0001F680 节点选择"
       - ♻️ 自动选择
+
   - name: "\U0001F3AF 全球直连"
     type: select
     proxies:
       - DIRECT
       - "\U0001F680 节点选择"
       - ♻️ 自动选择
+
   - name: "\U0001F6D1 广告拦截"
     type: select
     proxies:
       - REJECT
       - DIRECT
+
   - name: "\U0001F343 应用净化"
     type: select
     proxies:
       - REJECT
       - DIRECT
-  - name: "\U0001F4F1 GooglePlay"
-    type: select
-    proxies:
-      - "\U0001F680 节点选择"
-      - ♻️ 自动选择
-      - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
-      - "\U0001F680 手动切换"
-      - DIRECT
-  - name: "\U0001F4E8 TikTok"
-    type: select
-    proxies:
-      - "\U0001F680 节点选择"
-      - ♻️ 自动选择
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
-      - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
-      - "\U0001F680 手动切换"
-      - DIRECT
+
   - name: "\U0001F41F 漏网之鱼"
     type: select
     proxies:
@@ -337,53 +335,129 @@ proxy-groups:
       - ♻️ 自动选择
       - DIRECT
       - "\U0001F1ED\U0001F1F0 香港节点"
-      - "\U0001F1E8\U0001F1F3 台湾节点"
-      - "\U0001F1F8\U0001F1EC 狮城节点"
-      - "\U0001F1EF\U0001F1F5 日本节点"
+      - "\U0001F1F8\U0001F1EC 新加坡"
       - "\U0001F1FA\U0001F1F2 美国节点"
-      - "\U0001F1F0\U0001F1F7 韩国节点"
       - "\U0001F680 手动切换"
+
+  # ========== 新增国家/地区独立分组（带筛选规则） ==========
   - name: "\U0001F1ED\U0001F1F0 香港节点"
     include-all: true
-    filter: (?i)港|HK|hk|Hong Kong|HongKong|hongkong
+    filter: (?i)香港|HK|HongKong
     type: url-test
     interval: 300
     tolerance: 50
-  - name: "\U0001F1EF\U0001F1F5 日本节点"
-    include-all: true
-    filter: (?i)日本|川日|东京|大阪|泉日|埼玉|沪日|深日|JP|Japan
-    type: url-test
-    interval: 300
-    tolerance: 50
-  - name: "\U0001F1FA\U0001F1F2 美国节点"
-    include-all: true
-    filter: (?i)美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|United States
-    type: url-test
-    interval: 300
-    tolerance: 50
+
   - name: "\U0001F1E8\U0001F1F3 台湾节点"
     include-all: true
-    filter: (?i)台|新北|彰化|TW|Taiwan
+    filter: (?i)台湾|TW|Taiwan
     type: url-test
     interval: 300
     tolerance: 50
-  - name: "\U0001F1F8\U0001F1EC 狮城节点"
+
+  - name: "\U0001F1F8\U0001F1EC 新加坡"
     include-all: true
-    filter: (?i)新加坡|坡|狮城|SG|Singapore
+    filter: (?i)新加坡|狮城|SG|Singapore
     type: url-test
     interval: 300
     tolerance: 50
+
+  - name: "\U0001F1EF\U0001F1F5 日本节点"
+    include-all: true
+    filter: (?i)日本|JP|Japan
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1FA\U0001F1F2 美国节点"
+    include-all: true
+    filter: (?i)美国|US|USA|United States
+    type: url-test
+    interval: 300
+    tolerance: 50
+
   - name: "\U0001F1F0\U0001F1F7 韩国节点"
     include-all: true
-    filter: (?i)KR|Korea|KOR|首尔|韩|韓
+    filter: (?i)韩国|KR|Korea|首尔
     type: url-test
     interval: 300
     tolerance: 50
+
+  - name: "\U0001F1F2\U0001F1FE 马来西亚"
+    include-all: true
+    filter: (?i)马来西亚|大马|MY|Malaysia
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1F5\U0001F1F3 菲律宾"
+    include-all: true
+    filter: (?i)菲律宾|PH|Philippines
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1EE\U0001F1E9 印尼"
+    include-all: true
+    filter: (?i)印尼|印度尼西亚|ID|Indonesia
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1F9\U0001F1ED 泰国"
+    include-all: true
+    filter: (?i)泰国|TH|Thailand
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1FB\U0001F1F3 越南"
+    include-all: true
+    filter: (?i)越南|VN|Vietnam
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1EC\U0001F1E7 英国"
+    include-all: true
+    filter: (?i)英国|英|UK|United Kingdom
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1E9\U0001F1EA 德国"
+    include-all: true
+    filter: (?i)德国|DE|Germany
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1EB\U0001F1F7 法国"
+    include-all: true
+    filter: (?i)法国|FR|France
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1E6\U0001F1FA 澳洲"
+    include-all: true
+    filter: (?i)澳洲|澳大利亚|AU|Australia
+    type: url-test
+    interval: 300
+    tolerance: 50
+
+  - name: "\U0001F1E8\U0001F1E6 加拿大"
+    include-all: true
+    filter: (?i)加拿大|CA|Canada
+    type: url-test
+    interval: 300
+    tolerance: 50
+
   - name: "\U0001F3A5 奈飞节点"
     include-all: true
-    filter: (?i)NF|奈飞|解锁|Netflix|NETFLIX|Media
+    filter: (?i)NF|奈飞|Netflix
     type: select
 
+# 规则集
 rule-providers:
   LocalAreaNetwork:
     url: >-
@@ -654,6 +728,7 @@ rule-providers:
     format: text
     type: http
 
+# 分流规则
 rules:
   - "PROCESS-NAME,subs-check.exe,\U0001F3AF 全球直连"
   - "PROCESS-NAME,subs-check,\U0001F3AF 全球直连"
@@ -692,4 +767,3 @@ rules:
   - "RULE-SET,Download,\U0001F3AF 全球直连"
   - "GEOIP,CN,\U0001F3AF 全球直连"
   - "MATCH,\U0001F41F 漏网之鱼"
-
