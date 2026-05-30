@@ -16,13 +16,13 @@ tun:
   enable: true
   stack: mixed
   dns-hijack:
-    - any:53
-    - tcp://any:53
+    - "any:53"
+    - "tcp://any:53"
   auto-route: true
   auto-redirect: true
   auto-detect-interface: true
 
-# 代理提供者（自动剔除超时节点）
+# 单代理提供者配置
 proxy-providers:
   shaoyouvip:
     type: http
@@ -32,8 +32,7 @@ proxy-providers:
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
-      interval: 180
-      timeout: 3000
+      interval: 300
   kooker:
     type: http
     url: "https://ghproxy.net/https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/mihomo.yaml"
@@ -42,8 +41,7 @@ proxy-providers:
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
-      interval: 180
-      timeout: 3000
+      interval: 300
   nodesfree:
     type: http
     url: "https://ghproxy.net/https://raw.githubusercontent.com/nodesfree/clashnode/refs/heads/main/clash.yaml"
@@ -52,8 +50,7 @@ proxy-providers:
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
-      interval: 180
-      timeout: 3000
+      interval: 300
 
 # 地理数据源
 geodata-mode: true
@@ -63,13 +60,14 @@ geox-url:
   mmdb: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country-lite.mmdb"
   asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
 
-# DNS 配置（100% 无语法错误）
+# DNS配置
 dns:
   enable: true
   ipv6: true
   respect-rules: true
   enhanced-mode: fake-ip
   fake-ip-filter:
+    - "*"
     - "+.lan"
     - "+.local"
     - "+.market.xiaomi.com"
@@ -79,140 +77,203 @@ dns:
   proxy-server-nameserver:
     - https://120.53.53.53/dns-query
     - https://223.5.5.5/dns-query
+  nameserver-policy:
+    "geosite:cn,private":
+      - https://120.53.53.53/dns-query
+      - https://223.5.5.5/dns-query
+    "geosite:geolocation-!cn":
+      - "https://dns.cloudflare.com/dns-query"
+      - "https://dns.google/dns-query"
+    "geosite:telegram":
+      - "https://dns.cloudflare.com/dns-query"
+      - "https://dns.google/dns-query"
 
-# 代理分组
+# 代理分组（参考配置风格）
 proxy-groups:
-  - name: 默认
+  - name: 🚀 节点选择
     type: select
-    proxies: [自动选择, 延迟排序, 直连]
+    proxies: [♻️ 自动选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇺🇸 美国节点, 🇸🇬 狮城节点, 🛠️ 手动切换, DIRECT]
+
+  - name: 🛠️ 手动切换
+    type: select
     include-all: true
 
-  - name: Google
-    type: select
-    proxies: [自动选择, 延迟排序, 直连]
-    include-all: true
-
-  - name: TikTok
-    type: select
-    proxies: [自动选择, 延迟排序, 直连]
-    include-all: true
-
-  - name: Telegram
+  - name: ♻️ 自动选择
     type: url-test
+    include-all: true
     url: "https://www.gstatic.com/generate_204"
     interval: 300
     tolerance: 50
-    include-all: true
-    filter: "(?i)(港|hk|hongkong|台|tw|taiwan|日|jp|japan|美|us|unitedstates|新|sg|singapore)"
-    exclude-filter: "(?i)回国|cn|china|移动|联通|电信"
+    exclude-filter: "(?i)回国|安徽|北京|重庆|福建|甘肃|广东|广西|贵州|海南|河北|黑龙江|河南|湖北|湖南|吉林|江苏|江西|辽宁|内蒙古|宁夏|青海|山东|山西|陕西|上海|四川|天津|西藏|新疆|云南|浙江|官网|国内|国际|移动|联通|电信|cn|china"
 
-  - name: Twitter
-    type: select
-    proxies: [自动选择, 延迟排序, 直连]
-    include-all: true
-
-  - name: 哔哩哔哩
-    type: select
-    proxies: [直连, 自动选择, 延迟排序]
-    include-all: true
-
-  - name: 巴哈姆特
-    type: select
-    proxies: [自动选择, 延迟排序, 直连]
-    include-all: true
-
-  - name: YouTube
-    type: select
-    proxies: [自动选择, 延迟排序, 直连]
-    include-all: true
-
-  - name: NETFLIX
-    type: select
-    proxies: [自动选择, 延迟排序, 直连]
-    include-all: true
-
-  - name: Spotify
-    type: select
-    proxies: [自动选择, 延迟排序, 直连]
-    include-all: true
-
-  - name: Github
-    type: select
-    proxies: [自动选择, 延迟排序, 直连]
-    include-all: true
-
-  - name: 其他
-    type: select
-    proxies: [自动选择, 延迟排序, 直连]
-    include-all: true
-
-  - name: 自动选择
+  - name: 📱 电报消息
     type: url-test
-    url: https://www.gstatic.com/generate_204
-    interval: 180
-    tolerance: 10
     include-all: true
-    exclude-filter: "(?i)回国|cn|china|移动|联通|电信"
+    url: "https://www.google.com/generate_204"
+    interval: 300
+    tolerance: 50
+    filter: "(?i)(港|hk|hongkong|hong kong|台|tw|taiwan|日|jp|japan|美|us|unitedstates|united states|新|sg|singapore)"
+    exclude-filter: "(?i)回国|安徽|北京|重庆|福建|甘肃|广东|广西|贵州|海南|河北|黑龙江|河南|湖北|湖南|吉林|江苏|江西|辽宁|内蒙古|宁夏|青海|山东|山西|陕西|上海|四川|天津|西藏|新疆|云南|浙江|官网|国内|国际|移动|联通|电信|cn|china"
 
-  - name: 延迟排序
+  - name: 📺 油管视频
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇺🇸 美国节点, 🇸🇬 狮城节点]
+
+  - name: 🎬 奈飞视频
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇺🇸 美国节点, 🇸🇬 狮城节点]
+
+  - name: 🔍 谷歌服务
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇺🇸 美国节点, 🇸🇬 狮城节点]
+
+  - name: 🐦 推特社交
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇺🇸 美国节点, 🇸🇬 狮城节点]
+
+  - name: 🎵 声田音乐
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇺🇸 美国节点, 🇸🇬 狮城节点]
+
+  - name: 🧪 抖音海外
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇺🇸 美国节点, 🇸🇬 狮城节点]
+
+  - name: 🧩 巴哈姆特
+    type: select
+    proxies: [🇹🇼 台湾节点, 🚀 节点选择, 🛠️ 手动切换]
+
+  - name: 📺 哔哩哔哩
+    type: select
+    proxies: [🎯 全球直连, 🇭🇰 香港节点, 🇹🇼 台湾节点]
+
+  - name: 🧑‍💻 代码仓库
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇺🇸 美国节点, 🇸🇬 狮城节点]
+
+  - name: 🧪 AI平台
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇺🇸 美国节点, 🇸🇬 狮城节点]
+
+  - name: 🎯 全球直连
+    type: select
+    proxies: [DIRECT, 🚀 节点选择, ♻️ 自动选择]
+
+  - name: 🚫 广告拦截
+    type: select
+    proxies: [REJECT, DIRECT]
+
+  - name: 🐟 漏网之鱼
+    type: select
+    proxies: [🚀 节点选择, ♻️ 自动选择, DIRECT]
+
+  # 地区节点分组
+  - name: 🇭🇰 香港节点
     type: url-test
-    url: https://www.gstatic.com/generate_204
-    interval: 180
-    tolerance: 1000
     include-all: true
-    exclude-filter: "(?i)回国|cn|china|移动|联通|电信"
+    filter: "(?i)港|hk|hongkong|hong kong"
+    exclude-filter: "(?i)回国|安徽|北京|重庆|福建|甘肃|广东|广西|贵州|海南|河北|黑龙江|河南|湖北|湖南|吉林|江苏|江西|辽宁|内蒙古|宁夏|青海|山东|山西|陕西|上海|四川|天津|西藏|新疆|云南|浙江|官网|国内|国际|移动|联通|电信|cn|china"
+    url: "https://www.gstatic.com/generate_204"
+    interval: 300
+    tolerance: 50
 
-  - name: 国内节点
+  - name: 🇹🇼 台湾节点
+    type: url-test
+    include-all: true
+    filter: "(?i)台|tw|taiwan"
+    exclude-filter: "(?i)回国|安徽|北京|重庆|福建|甘肃|广东|广西|贵州|海南|河北|黑龙江|河南|湖北|湖南|吉林|江苏|江西|辽宁|内蒙古|宁夏|青海|山东|山西|陕西|上海|四川|天津|西藏|新疆|云南|浙江|官网|国内|国际|移动|联通|电信|cn|china"
+    url: "https://www.gstatic.com/generate_204"
+    interval: 300
+    tolerance: 50
+
+  - name: 🇯🇵 日本节点
+    type: url-test
+    include-all: true
+    filter: "(?i)日|jp|japan"
+    exclude-filter: "(?i)回国|安徽|北京|重庆|福建|甘肃|广东|广西|贵州|海南|河北|黑龙江|河南|湖北|湖南|吉林|江苏|江西|辽宁|内蒙古|宁夏|青海|山东|山西|陕西|上海|四川|天津|西藏|新疆|云南|浙江|官网|国内|国际|移动|联通|电信|cn|china"
+    url: "https://www.gstatic.com/generate_204"
+    interval: 300
+    tolerance: 50
+
+  - name: 🇺🇸 美国节点
+    type: url-test
+    include-all: true
+    filter: "(?i)美|us|unitedstates|united states"
+    exclude-filter: "(?i)回国|安徽|北京|重庆|福建|甘肃|广东|广西|贵州|海南|河北|黑龙江|河南|湖北|湖南|吉林|江苏|江西|辽宁|内蒙古|宁夏|青海|山东|山西|陕西|上海|四川|天津|西藏|新疆|云南|浙江|官网|国内|国际|移动|联通|电信|cn|china"
+    url: "https://www.gstatic.com/generate_204"
+    interval: 300
+    tolerance: 50
+
+  - name: 🇸🇬 狮城节点
+    type: url-test
+    include-all: true
+    filter: "(?i)新|sg|singapore"
+    exclude-filter: "(?i)回国|安徽|北京|重庆|福建|甘肃|广东|广西|贵州|海南|河北|黑龙江|河南|湖北|湖南|吉林|江苏|江西|辽宁|内蒙古|宁夏|青海|山东|山西|陕西|上海|四川|天津|西藏|新疆|云南|浙江|官网|国内|国际|移动|联通|电信|cn|china"
+    url: "https://www.gstatic.com/generate_204"
+    interval: 300
+    tolerance: 50
+
+  - name: 🇨🇳 国内节点
     type: select
     include-all: true
-    filter: "(?i)回国|cn|china|移动|联通|电信"
+    filter: "(?i)回国|安徽|北京|重庆|福建|甘肃|广东|广西|贵州|海南|河北|黑龙江|河南|湖北|湖南|吉林|江苏|江西|辽宁|内蒙古|宁夏|青海|山东|山西|陕西|上海|四川|天津|西藏|新疆|云南|浙江|移动|联通|电信|cn|china"
 
 proxies:
-  - name: "直连"
+  - name: "DIRECT"
     type: direct
     udp: true
 
-# 规则
+# 规则（参考配置规则集+原有规则融合）
 rules:
-  - GEOIP,lan,直连,no-resolve
-  - GEOSITE,private,直连,no-resolve
-  - GEOSITE,category-ads-all,REJECT
+  - PROCESS-NAME,subs-check.exe,🎯 全球直连
+  - PROCESS-NAME,subs-check,🎯 全球直连
 
-  - GEOSITE,cn,直连
-  - GEOSITE,onedrive,直连
-  - GEOSITE,microsoft@cn,直连
-  - GEOSITE,apple-cn,直连
-  - GEOSITE,steam@cn,直连
-  - GEOSITE,category-games@cn,直连
-  - GEOSITE,bilibili,直连
+  - GEOIP,lan,🎯 全球直连,no-resolve
+  - GEOSITE,private,🎯 全球直连,no-resolve
+  - GEOSITE,category-ads-all,🚫 广告拦截
 
-  - GEOSITE,biliintl,哔哩哔哩
-  - GEOSITE,github,Github
-  - GEOSITE,twitter,Twitter
-  - GEOSITE,youtube,YouTube
-  - GEOSITE,google,Google
-  - GEOSITE,telegram,Telegram
-  - GEOSITE,netflix,NETFLIX
-  - GEOSITE,bahamut,巴哈姆特
-  - GEOSITE,spotify,Spotify
+  # 国内直连
+  - GEOSITE,cn,🎯 全球直连
+  - GEOSITE,onedrive,🎯 全球直连
+  - GEOSITE,microsoft@cn,🎯 全球直连
+  - GEOSITE,apple-cn,🎯 全球直连
+  - GEOSITE,steam@cn,🎯 全球直连
+  - GEOSITE,category-games@cn,🎯 全球直连
+  - GEOSITE,bilibili,📺 哔哩哔哩
 
-  - IP-CIDR,91.108.4.0/22,Telegram,no-resolve
-  - IP-CIDR,91.108.8.0/22,Telegram,no-resolve
-  - IP-CIDR,91.108.12.0/22,Telegram,no-resolve
-  - IP-CIDR,91.108.16.0/22,Telegram,no-resolve
-  - IP-CIDR,91.108.20.0/22,Telegram,no-resolve
-  - IP-CIDR,91.108.56.0/22,Telegram,no-resolve
-  - IP-CIDR,149.154.160.0/20,Telegram,no-resolve
-  - IP-CIDR,185.76.151.0/24,Telegram,no-resolve
+  # 应用分流
+  - GEOSITE,biliintl,📺 哔哩哔哩
+  - GEOSITE,github,🧑‍💻 代码仓库
+  - GEOSITE,twitter,🐦 推特社交
+  - GEOSITE,youtube,📺 油管视频
+  - GEOSITE,google,🔍 谷歌服务
+  - GEOSITE,telegram,📱 电报消息
+  - GEOSITE,netflix,🎬 奈飞视频
+  - GEOSITE,bahamut,🧩 巴哈姆特
+  - GEOSITE,spotify,🎵 声田音乐
+  - GEOSITE,tiktok,🧪 抖音海外
+  - GEOSITE,openai,🧪 AI平台
 
-  - GEOIP,private,直连,no-resolve
-  - GEOIP,telegram,Telegram,no-resolve
-  - GEOIP,twitter,Twitter,no-resolve
-  - GEOIP,google,Google,no-resolve
-  - GEOIP,netflix,NETFLIX,no-resolve
-  - GEOIP,CN,直连,no-resolve
+  # Telegram IP段
+  - IP-CIDR,91.108.4.0/22,📱 电报消息,no-resolve
+  - IP-CIDR,91.108.8.0/22,📱 电报消息,no-resolve
+  - IP-CIDR,91.108.12.0/22,📱 电报消息,no-resolve
+  - IP-CIDR,91.108.16.0/22,📱 电报消息,no-resolve
+  - IP-CIDR,91.108.20.0/22,📱 电报消息,no-resolve
+  - IP-CIDR,91.108.56.0/22,📱 电报消息,no-resolve
+  - IP-CIDR,149.154.160.0/20,📱 电报消息,no-resolve
+  - IP-CIDR,185.76.151.0/24,📱 电报消息,no-resolve
 
-  - GEOSITE,category-scholar-!cn,默认
-  - GEOSITE,geolocation-!cn,其他
-  - DST-PORT,80/8080/443/8443,其他
-  - MATCH,其他
+  # IP规则
+  - GEOIP,private,🎯 全球直连,no-resolve
+  - GEOIP,telegram,📱 电报消息,no-resolve
+  - GEOIP,twitter,🐦 推特社交,no-resolve
+  - GEOIP,google,🔍 谷歌服务,no-resolve
+  - GEOIP,netflix,🎬 奈飞视频,no-resolve
+  - GEOIP,CN,🎯 全球直连,no-resolve
+
+  # 收尾规则
+  - GEOSITE,category-scholar-!cn,🚀 节点选择
+  - GEOSITE,geolocation-!cn,🐟 漏网之鱼
+  - DST-PORT,80/8080/443/8443,🐟 漏网之鱼
+  - MATCH,🐟 漏网之鱼
