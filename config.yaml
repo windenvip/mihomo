@@ -82,6 +82,8 @@ proxy-groups:
     proxies:
       - ♻️ 自动选择
       - "\U0001F680 手动切换"
+      - "\U0001F4E6 其他节点"
+      - DIRECT
       - "\U0001F1ED\U0001F1F0 香港"
       - "\U0001F1E8\U0001F1F3 台湾"
       - "\U0001F1F8\U0001F1EC 新加坡"
@@ -98,8 +100,7 @@ proxy-groups:
       - "\U0001F1EB\U0001F1F7 法国"
       - "\U0001F1E6\U0001F1FA 澳洲"
       - "\U0001F1E8\U0001F1E6 加拿大"
-      - "\U0001F4E6 其他节点"
-      - DIRECT
+
 
   - name: ♻️ 自动选择
     type: url-test
