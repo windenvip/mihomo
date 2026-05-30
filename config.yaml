@@ -22,7 +22,7 @@ tun:
   auto-redirect: true
   auto-detect-interface: true
 
-# 代理提供者
+# 代理订阅
 proxy-providers:
   shaoyouvip:
     type: http
@@ -88,23 +88,27 @@ dns:
       - "https://dns.cloudflare.com/dns-query"
       - "https://dns.google/dns-query"
 
-# 代理分组（核心改动在这里）
+# 代理分组（核心：每个应用默认自动，且内置全部节点可单独手动切换）
 proxy-groups:
+  # 全局默认
   - name: 默认
     type: select
-    proxies: [自动选择, 全部节点, 直连]
+    proxies: [自动选择, 直连]
+    include-all: true
 
   - name: Google
     type: select
-    proxies: [自动选择, 全部节点, 直连]
+    proxies: [自动选择, 直连]
+    include-all: true
 
   - name: TikTok
     type: select
-    proxies: [自动选择, 全部节点, 直连]
+    proxies: [自动选择, 直连]
+    include-all: true
 
   - name: Telegram
     type: url-test
-    url: "https://www.google.com/generate_204"
+    url: "https://www.gstatic.com/generate_204"
     interval: 300
     tolerance: 50
     include-all: true
@@ -113,50 +117,52 @@ proxy-groups:
 
   - name: Twitter
     type: select
-    proxies: [自动选择, 全部节点, 直连]
+    proxies: [自动选择, 直连]
+    include-all: true
 
   - name: 哔哩哔哩
     type: select
-    proxies: [直连, 自动选择, 全部节点]
+    proxies: [直连, 自动选择]
+    include-all: true
 
   - name: 巴哈姆特
     type: select
-    proxies: [自动选择, 全部节点, 直连]
+    proxies: [自动选择, 直连]
+    include-all: true
 
   - name: YouTube
     type: select
-    proxies: [自动选择, 全部节点, 直连]
+    proxies: [自动选择, 直连]
+    include-all: true
 
   - name: NETFLIX
     type: select
-    proxies: [自动选择, 全部节点, 直连]
+    proxies: [自动选择, 直连]
+    include-all: true
 
   - name: Spotify
     type: select
-    proxies: [自动选择, 全部节点, 直连]
+    proxies: [自动选择, 直连]
+    include-all: true
 
   - name: Github
     type: select
-    proxies: [自动选择, 全部节点, 直连]
+    proxies: [自动选择, 直连]
+    include-all: true
 
   - name: 其他
     type: select
-    proxies: [自动选择, 全部节点, 直连]
-
-  # -------------------
-  # 关键：手动选所有节点（不按地区分组）
-  # -------------------
-  - name: 全部节点
-    type: select
+    proxies: [自动选择, 直连]
     include-all: true
 
-  # 自动选最快（不含国内）
+  # 自动优选节点（排除国内线路）
   - name: 自动选择
     type: url-test
     include-all: true
     tolerance: 10
     exclude-filter: "(?i)回国|cn|china|移动|联通|电信"
 
+  # 国内节点组
   - name: 国内节点
     type: select
     include-all: true
@@ -167,12 +173,12 @@ proxies:
     type: direct
     udp: true
 
+# 规则部分（保持原有分流逻辑不变）
 rules:
   - GEOIP,lan,直连,no-resolve
   - GEOSITE,private,直连,no-resolve
   - GEOSITE,category-ads-all,REJECT
 
-  # 国内直连
   - GEOSITE,cn,直连
   - GEOSITE,onedrive,直连
   - GEOSITE,microsoft@cn,直连
@@ -181,7 +187,6 @@ rules:
   - GEOSITE,category-games@cn,直连
   - GEOSITE,bilibili,直连
 
-  # 国际服务 → 对应分组（默认自动）
   - GEOSITE,biliintl,哔哩哔哩
   - GEOSITE,github,Github
   - GEOSITE,twitter,Twitter
@@ -192,7 +197,6 @@ rules:
   - GEOSITE,bahamut,巴哈姆特
   - GEOSITE,spotify,Spotify
 
-  # Telegram IP
   - IP-CIDR,91.108.4.0/22,Telegram,no-resolve
   - IP-CIDR,91.108.8.0/22,Telegram,no-resolve
   - IP-CIDR,91.108.12.0/22,Telegram,no-resolve
