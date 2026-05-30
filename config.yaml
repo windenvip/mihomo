@@ -26,7 +26,7 @@ tun:
 proxy-providers:
   shaoyouvip:
     type: http
-    url: "https://cdn.jsdelivr.net/gh/shaoyouvip/free@main/mihomo.yaml"
+    url: "https://ghproxy.net/https://raw.githubusercontent.com/shaoyouvip/free/refs/heads/main/mihomo.yaml"
     interval: 21600
     path: ./proxy/shaoyouvip.yaml
     health-check:
@@ -35,7 +35,7 @@ proxy-providers:
       interval: 300
   kooker:
     type: http
-    url: "https://cdn.jsdelivr.net/gh/kooker/FreeSubsCheck@main/all.yaml"
+    url: "https://ghproxy.net/https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/mihomo.yaml"
     interval: 21600
     path: ./proxy/kooker.yaml
     health-check:
@@ -44,7 +44,7 @@ proxy-providers:
       interval: 300
   nodesfree:
     type: http
-    url: "https://cdn.jsdelivr.net/gh/nodesfree/clashnode@main/clash.yaml"
+    url: "https://ghproxy.net/https://raw.githubusercontent.com/nodesfree/clashnode/refs/heads/main/clash.yaml"
     interval: 21600
     path: ./proxy/nodesfree.yaml
     health-check:
